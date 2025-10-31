@@ -1,0 +1,15 @@
+@startuml
+actor Библиотекарь as bookman
+database Система as system
+alt если срок сдачи не просрочен
+	bookman -> system : Библиотекарь открывает форму возврата книг
+	system --> bookman : Форма возврата книг открыта
+	bookman -> system :  Библиоткарь фиксирует сдачу книг
+	system --> bookman : Система зафиксировала сдачу книги
+else если срок сдачи просрочен
+	bookman -> system : Сформировать счет для оплаты просрочки
+	loop оплата не прошла
+		system --> bookman : Ожидание оплаты
+	end
+end
+@enduml

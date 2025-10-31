@@ -1,0 +1,103 @@
+@startuml
+!theme plain
+
+entity "Department" as Department {
+    *ID_отдела : int <<PK>>
+    ---
+    Название : string
+    Описание : string
+}
+
+entity "Employee" as Employee {
+    *ID_сотрудника : int <<PK>>
+    ---
+    ФИО : string
+    Паспортные_данные : string
+    Должность : string
+    Дата_рождения : date
+    Дата_устройства : date
+    ID_отдела : int <<FK>>
+}
+
+entity "Enclosure" as Enclosure {
+    *ID_вольера : int <<PK>>
+    ---
+    Название : string
+    Тип : string
+    Местоположение : string
+    ID_отдела : int <<FK>>
+    ID_старшего_зоотехника : int <<FK>>
+}
+
+entity "Species" as Species {
+    *ID_вида : int <<PK>>
+    ---
+    Название_вида : string
+    Тип_питания : string
+    Допустимые_продукты : string
+    Особенности_содержания : string
+}
+
+entity "Animal" as Animal {
+    *ID_животного : int <<PK>>
+    ---
+    Кличка : string
+    Пол : string
+    Дата_рождения : date
+    Происхождение : string
+    Место_покупки : string
+    Состояние_здоровья : int
+    ID_вида : int <<FK>>
+    ID_вольера : int <<FK>>
+    Родитель_1 : int <<FK, nullable>>
+    Родитель_2 : int <<FK, nullable>>
+}
+
+entity "FoodItem" as FoodItem {
+    *ID_продукта : int <<PK>>
+    ---
+    Название : string
+    Ед_измерения : string
+}
+
+entity "Feeding" as Feeding {
+    *ID_кормления : int <<PK>>
+    ---
+    Дата_время : datetime
+    Количество : float
+    ID_вольера : int <<FK>>
+    ID_вида : int <<FK>>
+    ID_сотрудника : int <<FK>>
+    ID_продукта : int <<FK>>
+}
+
+entity "Cleaning" as Cleaning {
+    *ID_уборки : int <<PK>>
+    ---
+    Дата_время : datetime
+    Комментарий : string
+    ID_вольера : int <<FK>>
+    ID_сотрудника : int <<FK>>
+}
+
+'---------------- Связи ----------------
+
+Department ||--o{ Employee : "нанимает"
+Department ||--o{ Enclosure : "содержит"
+
+Employee ||--o{ Enclosure : "ответственный (старший зоотехник)"
+Employee ||--o{ Feeding : "выполняет"
+Employee ||--o{ Cleaning : "выполняет"
+
+Enclosure ||--o{ Animal : "содержит"
+Enclosure ||--o{ Feeding : "место кормления"
+Enclosure ||--o{ Cleaning : "уборка"
+
+Species ||--o{ Animal : "включает"
+Species ||--o{ Feeding : "кормление вида"
+
+FoodItem ||--o{ Feeding : "используется при"
+
+Animal ||-- Animal : "родители (self reference)"
+
+@enduml
